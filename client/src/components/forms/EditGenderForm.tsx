@@ -1,6 +1,27 @@
-import { Link } from "react-router-dom";
+import { useState } from 'react';
+import { Link, useParams } from "react-router-dom";
+import GenderService from "../../services/GenderService";
 
 const EditGenderForm = () => {
+ 
+  const { gender_id } = useParams();
+
+  const [state, setState] = useState({
+    loadingGet: true,
+    gender: "",
+  })
+
+  const handleGetGender = (genderId: number) => {
+    if(gender_id) {
+      const parsedGenderId = parseInt(gender_id)
+
+       setState((prevState) => ({
+      ...prevState
+  }))
+    
+  GenderService.getGender(parsedGenderId).then().catch().finally();
+
+  };
   return (
     <>
       <div className="form-group">
@@ -25,5 +46,6 @@ const EditGenderForm = () => {
     </>
   );
 };
+}
 
 export default EditGenderForm;
