@@ -3,6 +3,7 @@ import Genders from "../../interfaces/Genders";
 import GenderService from "../../services/GenderService";
 import ErrorHandler from "../../handler/ErrorHandler";
 import Spinner from "../Spinner";
+import { Link } from "react-router-dom";
 
 interface GendersTableProps {
   refreshGenders: boolean;
@@ -72,7 +73,8 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
               <td>{gender.gender}</td>
               <td>
                 <div className="btn-group">
-                  <button type="button" className="btn btn-success">Edit</button>
+                  <Link to={`/gender/edit/${gender.gender_id}`} 
+                  className="btn btn-success">Edit</Link>
                   <button type="button" className="btn btn-danger">Delete</button>
                 </div>
               </td>

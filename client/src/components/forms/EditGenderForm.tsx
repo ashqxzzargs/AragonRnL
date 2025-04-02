@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
 import GenderService from "../../services/GenderService";
+import ErrorHandler from '../../handler/ErrorHandler';
 
 const EditGenderForm = () => {
  
@@ -9,19 +10,52 @@ const EditGenderForm = () => {
   const [state, setState] = useState({
     loadingGet: true,
     gender: "",
-  })
+  });
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target;
+    setState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleGetGender = (genderId: number) => {
+       setState((prevState) => ({
+      ...prevState, 
+      loadingGet: true,
+  }));
+    
+  GenderService.getGender(genderId)
+  .then((res) => {
+    if(res.status === 200) {
+      setState((prevState) => ({
+        ...prevState,
+        gender: res.data.gender
+      }));
+    } else {
+      console.error('unexpected status error while getting gender:', 
+        res.status
+      );
+    }
+  })
+  .catch((error) => {
+    ErrorHandler(error, null)
+  }) 
+  .finally(() => {
+    setState ((prevState) => ({
+      ...prevState,
+      loadingGet: false,
+    }));
+  });
+    
+  useEffect(() => {
     if(gender_id) {
       const parsedGenderId = parseInt(gender_id)
-
-       setState((prevState) => ({
-      ...prevState
-  }))
-    
-  GenderService.getGender(parsedGenderId).then().catch().finally();
-
-  };
+      handleGetGender(parsedGenderId);
+    }
+  }, [gender_id]);
+  
   return (
     <>
       <div className="form-group">
@@ -31,7 +65,8 @@ const EditGenderForm = () => {
             type="text"
             className="form-control"
             id="gender"
-            name="gender"
+            value={state.gender}
+            onChange={handleInputChange}
           />
         </div>
         <div className="d-flex justify-content-end">
